@@ -66,7 +66,6 @@ foreach($myMovie in $movieFolders){
             write-host "Deleting Empty:"$myMovieName -f yellow
             write-host $myMovie.FullName -f yellow
         }
-        write-host "Mine:"$myMovieName 
         write-host $myMovie.FullName 
     }
 }

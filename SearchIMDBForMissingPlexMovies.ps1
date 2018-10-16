@@ -1,6 +1,6 @@
 ﻿. .\config.ps1
 
-$pagesToSearch=10
+$pagesToSearch=60
 
 function getPlexToken(){
     $BB = [System.Text.Encoding]::UTF8.GetBytes("$username`:$password")
@@ -45,15 +45,16 @@ foreach($movie in $allPlexMovies.video){
     $count++
 }
 
-for($page=1;$page -lt $pagesToSearch;$page++){
+for($page=1;$page -le $pagesToSearch;$page++){
     $result=invoke-webrequest -Uri "https://www.imdb.com/search/title?my_ratings=restrict&title_type=feature&sort=num_votes,desc&page=$page&ref_=adv_nxt"
-    $classes=$result.ParsedHtml.body.getElementsByClassName("loadlate")
+    $classes=$result.ParsedHtml.body.getElementsByClassName("lister-item-header")
     foreach($class in $classes){
-        $movieName=$class.alt
-        $matched= $class.outerHTML -match "(tt[0-9]{7})"
-        $imdbID=$matches[0]
+        $aLink=$class.getElementsByTagName('a')[0]
+        $movieName=$aLink.innerText
+        $imdbID=$aLink.pathname.split("/")[1]
+        $year=$class.getElementsByTagName('span')[1].innerText
         if($myIMDBIDs -notcontains $imdbID){
-            write-host "$movieName - $imdbID" -f Yellow
+            write-host "$movieName $year" -f Yellow
         }
-   }
+    }
 }
